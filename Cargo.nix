@@ -6135,10 +6135,6 @@ rec {
             packageId = "futures";
           }
           {
-            name = "hex";
-            packageId = "hex";
-          }
-          {
             name = "hostname";
             packageId = "hostname";
           }
@@ -6242,10 +6238,6 @@ rec {
           {
             name = "serde_yaml";
             packageId = "serde_yaml";
-          }
-          {
-            name = "sha2";
-            packageId = "sha2";
           }
           {
             name = "shell-escape";
@@ -6947,6 +6939,10 @@ rec {
             packageId = "futures";
           }
           {
+            name = "hex";
+            packageId = "hex";
+          }
+          {
             name = "miette";
             packageId = "miette";
             features = [ "fancy" ];
@@ -6977,6 +6973,10 @@ rec {
           {
             name = "serde_json";
             packageId = "serde_json";
+          }
+          {
+            name = "sha2";
+            packageId = "sha2";
           }
           {
             name = "signal-hook";
