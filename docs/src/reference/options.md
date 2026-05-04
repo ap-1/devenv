@@ -3585,6 +3585,64 @@ string
 
 
 
+## devenv.preFlight
+
+
+
+Pre-flight commands run during devenv startup, before its
+internal subsystems initialize. Useful for fetching tokens or
+other values that devenv-core itself reads from the environment
+early. Commands run in dependency-key alphabetical order.
+
+
+
+*Type:*
+attribute set of (submodule)
+
+
+
+*Default:*
+
+```nix
+{ }
+```
+
+
+
+*Example:*
+
+```nix
+{
+  cachix-auth.command = "echo CACHIX_AUTH_TOKEN=$(get-token-somehow)";
+}
+
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/top-level.nix](https://github.com/cachix/devenv/blob/main/src/modules/top-level.nix)
+
+
+
+## devenv.preFlight.\<name>.command
+
+
+
+Shell command run during devenv startup, before its internal
+subsystems (cachix, substituter netrc, etc.) initialize.
+Lines of ` KEY=value ` written to stdout are merged into
+devenv’s process environment and become visible to those
+subsystems.
+
+
+
+*Type:*
+string
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/top-level.nix](https://github.com/cachix/devenv/blob/main/src/modules/top-level.nix)
+
+
+
 ## devenv.warnOnNewVersion
 
 
@@ -5971,8 +6029,6 @@ submodule
 
 ## git-hooks.hooks.biome.enable
 
-
-
 Whether to enable this pre-commit hook.
 
 
@@ -6030,6 +6086,8 @@ null or string or absolute path
 
 
 ## git-hooks.hooks.biome.settings.configPath
+
+
 
 Path to the configuration JSON file
 
@@ -8244,8 +8302,6 @@ false
 
 ## git-hooks.hooks.isort.settings.flags
 
-
-
 Flags passed to isort. See all available [here](https://pycqa.github.io/isort/docs/configuration/options.html).
 
 
@@ -8291,6 +8347,8 @@ one of “”, “black”, “django”, “pycharm”, “google”, “open_s
 
 
 ## git-hooks.hooks.lacheck
+
+
 
 lacheck hook
 
@@ -28198,6 +28256,294 @@ Elasticsearch port for the node to node communication.
 
 *Declared by:*
  - [https://github.com/cachix/devenv/blob/main/src/modules/services/elasticsearch.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/elasticsearch.nix)
+
+
+
+## services.garage.enable
+
+
+
+Whether to enable Garage S3-compatible object storage.
+
+
+
+*Type:*
+boolean
+
+
+
+*Default:*
+
+```nix
+false
+```
+
+
+
+*Example:*
+
+```nix
+true
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.package
+
+
+
+Garage package to use.
+
+
+
+*Type:*
+package
+
+
+
+*Default:*
+
+```nix
+pkgs.garage_2
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.adminAddress
+
+
+
+IP address and port of the admin API.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+
+```nix
+"127.0.0.1:3903"
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.adminToken
+
+
+
+Admin API bearer token. Hard-coded for single-node dev; production
+deployments override this with a real secret.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+
+```nix
+"devtoken"
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.afterStart
+
+
+
+Bash code to execute after the server is running and the cluster
+layout is applied. The ` garage ` CLI in scope already points at the
+local instance via the generated config.
+
+
+
+*Type:*
+strings concatenated with “\\n”
+
+
+
+*Default:*
+
+```nix
+""
+```
+
+
+
+*Example:*
+
+```nix
+''
+  garage key new --name app-key
+  garage bucket allow --read --write --owner my-bucket --key app-key
+''
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.buckets
+
+
+
+List of buckets to ensure exist on startup.
+
+
+
+*Type:*
+list of string
+
+
+
+*Default:*
+
+```nix
+[ ]
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.extraConfig
+
+
+
+Additional ` garage.toml ` snippet appended to the generated config.
+
+
+
+*Type:*
+strings concatenated with “\\n”
+
+
+
+*Default:*
+
+```nix
+""
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.region
+
+
+
+S3 region label reported by the server. Defaults to AWS’s canonical
+` us-east-1 `.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+
+```nix
+"us-east-1"
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.replicationFactor
+
+
+
+Cluster replication factor. Single-node devenv setups always use 1.
+
+
+
+*Type:*
+signed integer
+
+
+
+*Default:*
+
+```nix
+1
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.rpcSecret
+
+
+
+RPC secret as 64 hex characters. Hard-coded for single-node dev;
+production deployments override this with a real secret.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+
+```nix
+"0000000000000000000000000000000000000000000000000000000000000000"
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
+
+
+
+## services.garage.s3Address
+
+
+
+IP address and port of the S3 API.
+
+
+
+*Type:*
+string
+
+
+
+*Default:*
+
+```nix
+"127.0.0.1:3900"
+```
+
+*Declared by:*
+ - [https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix](https://github.com/cachix/devenv/blob/main/src/modules/services/garage.nix)
 
 
 
