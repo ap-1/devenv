@@ -666,6 +666,7 @@ fn complete_task_names(current: &OsStr) -> Vec<CompletionCandidate> {
     name = "devenv",
     color = clap::ColorChoice::Auto,
     disable_help_flag = true,
+    arg_required_else_help = true,
     // for --clean to work with subcommands
     subcommand_precedence_over_arg = true,
     dont_delimit_trailing_values = true,
@@ -673,7 +674,7 @@ fn complete_task_names(current: &OsStr) -> Vec<CompletionCandidate> {
 )]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Option<Commands>,
+    pub command: Commands,
 
     #[arg(
         long,
@@ -1304,7 +1305,7 @@ mod tests {
         let cli = Cli::parse_from(["devenv", "up", "--no-strict-ports"]);
 
         match cli.command {
-            Some(Commands::Up { up_args }) => {
+            Commands::Up { up_args } => {
                 assert!(!up_args.strict_ports);
                 assert!(up_args.no_strict_ports);
             }
@@ -1317,9 +1318,9 @@ mod tests {
         let cli = Cli::parse_from(["devenv", "processes", "up", "--no-strict-ports"]);
 
         match cli.command {
-            Some(Commands::Processes {
+            Commands::Processes {
                 command: ProcessesCommand::Up { up_args },
-            }) => {
+            } => {
                 assert!(!up_args.strict_ports);
                 assert!(up_args.no_strict_ports);
             }
